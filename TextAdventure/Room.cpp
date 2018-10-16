@@ -7,10 +7,11 @@ std::string Room::GetName()
 
 std::shared_ptr<Room> Room::CheckExit(ExitDirections dir)
 {
-	for (size_t i = 0; i < exits.size(); i++)
+	// use a range-based for loop to work through all values in the exits vector
+	for (auto exit : exits)
 	{
-		if (exits.at(i)->HasDirection(dir))
-			return exits.at(i)->GetRoom();
+		if (exit->HasDirection(dir))
+			return exit->GetRoom();
 	}
 
 	return nullptr;
