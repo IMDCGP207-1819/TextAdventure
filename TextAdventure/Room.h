@@ -7,7 +7,8 @@
 #include "UtilEnums.h"
 
 /* forward declaration of Exit class - allows us to not include Exit.h in this file
-   this is something known as a "circular dependency". */
+   the issue here is that Exit needs to know about Room and Room needs to know about Exit.
+   This is something called a "circular dependency" and is generally frowned upon*/
 class Exit;
 
 /// Room has a name, description, vector of exits and vector of items
