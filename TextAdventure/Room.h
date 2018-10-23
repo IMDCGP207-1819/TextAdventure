@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "UtilEnums.h"
+#include "Item.h"
 
 /* forward declaration of Exit class - allows us to not include Exit.h in this file
    the issue here is that Exit needs to know about Room and Room needs to know about Exit.
@@ -36,4 +37,5 @@ private:
 	std::string name;
 	std::string description;
 	std::vector<std::shared_ptr<Exit>> exits;
+	std::vector<std::shared_ptr<Item>> inventory;
 };

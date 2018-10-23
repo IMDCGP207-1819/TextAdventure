@@ -4,7 +4,6 @@
 #include <iostream>
 #include <sstream>
 #include <iterator>
-#include <memory>
 
 #include "Room.h"
 #include "Exit.h"
@@ -20,6 +19,7 @@ void Game::Run()
 		std::string input; 
 		std::getline(std::cin, input);
 
+		// split the input string at every space ' ' found, storing the resulting strings into a vector
 		std::istringstream iss(input);
 		std::vector<std::string> results((std::istream_iterator<std::string>(iss)),
 			std::istream_iterator<std::string>());
@@ -43,8 +43,13 @@ void Game::Run()
 		if (verb == "look")
 		{
 			// TODO: break look up into looking at the room 'look' and looking at thing 'look <item>'
-			std::cout << CurrentRoom->GetName() << "\n";
-			std::cout << CurrentRoom->GetDescription() << "\n";
+			if (results.size() == 2) {
+
+			}
+			else {
+				DoRoomLook();
+			}
+			
 		}
 
 		if (verb == "quit")
@@ -54,6 +59,9 @@ void Game::Run()
 
 void Game::Init()
 {
+	// build the player object, only Game cares about it, so it can be unique.
+	Player = std::make_unique<Adventurer>();
+
 	// we use shared pointers to save us worrying about tidying up memory as we go.
 	CurrentRoom = std::make_shared<Room>("starting room");
 
@@ -89,4 +97,10 @@ void Game::HandleMovement(std::string direction)
 	{
 		std::cout << "You cannot move in that direction\n";
 	}
+}
+
+void Game::DoRoomLook()
+{
+	std::cout << CurrentRoom->GetName() << "\n";
+	std::cout << CurrentRoom->GetDescription() << "\n";
 }

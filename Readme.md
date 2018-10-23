@@ -15,3 +15,7 @@ Basic text adventure game that will load environments and other config elements 
   - [ ] JSON library
   - [ ] world building from data
   - [ ] command configuration
+- [ ] World representation
+  - [ ] Items
+  - [ ] Rooms
+  - [ ] Adventurer

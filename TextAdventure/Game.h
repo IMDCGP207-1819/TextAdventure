@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "Room.h"
+#include "Adventurer.h"
 
 ///
 /// Game class, contains core game loop
@@ -19,5 +20,8 @@ private:
 	bool ChangeRoom(std::shared_ptr<Room> NewRoom);
 	void HandleMovement(std::string direction);
 
+	void DoRoomLook();
+
 	std::shared_ptr<Room> CurrentRoom;
+	std::unique_ptr<Adventurer> Player;
 };
