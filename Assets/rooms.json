@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Starting room",
+    "id": 1,
+    "description": "It's quite dark, dim lights are visible in the distance, but you can never get closer to them.",
+    "exits": [ { "north": 2 } ],
+    "items": [],
+    "starting": true
+  },
+  {
+    "name": "Other room",
+    "id": 2,
+    "description": "It's a different room to the last room you were in. Probably.",
+    "exits": [ { "south": 1 } ],
+    "items": [],
+    "starting": false
+  }
+]

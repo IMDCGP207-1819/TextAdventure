@@ -17,15 +17,18 @@ class Room
 {
 public:
 	/// Room constructor with default description and empty exits and item vectors
-	Room(std::string _name) : name(_name), description(""), exits() {}
+	Room(int _id, std::string _name) : id(_id), name(_name), description(""), exits() {}
 	/// Room constructor with default exit and item vectors
-	Room(std::string _name, std::string desc) : name(_name), description(desc), exits() {}
+	Room(int _id, std::string _name, std::string desc) : id(_id), name(_name), description(desc), exits() {}
 
 	/// GetName - returns the room name
 	std::string GetName();
 
 	/// GetDescription - returns the room description
 	std::string GetDescription() { return description; }
+
+	/// GetRoomId - returns the room id number
+	int GetRoomId() { return id; }
 
 	/// CheckExit - searches the exit vector for an exit associated with the given direction
 	std::shared_ptr<Room> CheckExit(ExitDirections dir);
@@ -34,6 +37,7 @@ public:
 	void AddExit(std::shared_ptr<Exit> newExit);
 
 private:
+	int id;
 	std::string name;
 	std::string description;
 	std::vector<std::shared_ptr<Exit>> exits;

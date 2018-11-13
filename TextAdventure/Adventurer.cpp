@@ -6,7 +6,7 @@
 bool Adventurer::HasItem(std::string itemName) 
 {
 	// find_if searches a container (in this case, the inventory vector) and matches against either a single value or, as here, with a predicate
-	// below, the predicate is a lambda function; it "captures" a reference itemName and uses it to compare against each item in the inventory.
+	// below, the predicate is a lambda function; it "captures" a reference to itemName and uses it to compare against each item in the inventory.
 	return std::find_if(inventory.begin(), inventory.end(), [&itemName](std::shared_ptr<Item> &item) {return item->GetName() == itemName; }) == inventory.end();
 }
 

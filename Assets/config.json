@@ -1,0 +1,18 @@
+{
+  "move": {
+    "description": "move <direction> - move in the specified direction, if possible",
+    "synonyms": [ "move", "go", "walk", "travel", "run" ]
+  },
+  "look": {
+    "description": "look or look <item> - describes the current room or the specified item",
+    "synonyms": [ "look", "observe", "stare" ]
+  },
+  "help": {
+    "description": "prints the available commands",
+    "synonyms": [ "help", "stuck", "hint" ]
+  },
+  "quit": {
+    "description": "exit the game",
+    "synonyms": ["quit", "exit"]
+  }
+}
