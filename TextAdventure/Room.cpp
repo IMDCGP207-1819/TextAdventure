@@ -21,3 +21,8 @@ void Room::AddExit(std::shared_ptr<Exit> newExit)
 {
 	exits.push_back(newExit);
 }
+
+void Room::AddItem(std::unique_ptr<Item> newItem)
+{
+	inventory.push_back(std::move(newItem));
+}

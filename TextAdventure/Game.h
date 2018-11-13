@@ -27,6 +27,7 @@ public:
 private:
 	/// Init - loads data files and creates "physical" space.
 	void Init();
+	void LoadItemData();
 	void LoadRoomData();
 	void LoadConfig();
 	ExitDirections GetDirectionFromString(std::string dir);
@@ -40,6 +41,7 @@ private:
 	std::string StandardiseCommandInput(std::string command);
 
 	std::shared_ptr<Room> CurrentRoom;
+	std::vector<std::shared_ptr<Room>> rooms;
 	std::unique_ptr<Adventurer> Player;
 	controlMap commandMap;
 };

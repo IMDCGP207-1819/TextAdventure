@@ -3,8 +3,11 @@
     "name": "Starting room",
     "id": 1,
     "description": "It's quite dark, dim lights are visible in the distance, but you can never get closer to them.",
-    "exits": [ { "north": 2 } ],
-    "items": [],
+    "exits": [
+      { "north": 2 },
+      { "east": 3 }
+    ],
+    "items": [1],
     "starting": true
   },
   {
@@ -12,6 +15,14 @@
     "id": 2,
     "description": "It's a different room to the last room you were in. Probably.",
     "exits": [ { "south": 1 } ],
+    "items": [],
+    "starting": false
+  },
+  {
+    "name": "room 3",
+    "id": 3,
+    "description": "It's a different room to the last room you were in. Maybe.",
+    "exits": [ { "west": 1 } ],
     "items": [],
     "starting": false
   }

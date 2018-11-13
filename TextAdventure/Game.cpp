@@ -1,5 +1,10 @@
 #include "Game.h"
 
+#define _WIN32_WINNT 0x0500
+
+#include <windows.h> 
+#include <iostream>
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -14,6 +19,23 @@ struct TempExit {
 	int toId;
 	int fromId;
 };
+
+void clear() {
+	COORD topLeft = { 0, 0 };
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO screen;
+	DWORD written;
+
+	GetConsoleScreenBufferInfo(console, &screen);
+	FillConsoleOutputCharacterA(
+		console, ' ', screen.dwSize.X * screen.dwSize.Y, topLeft, &written
+	);
+	FillConsoleOutputAttribute(
+		console, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE,
+		screen.dwSize.X * screen.dwSize.Y, topLeft, &written
+	);
+	SetConsoleCursorPosition(console, topLeft);
+}
 
 void Game::Run()
 {
@@ -44,6 +66,8 @@ void Game::Run()
 			std::cout << "invalid command, type 'help' for a list of valid commands\n";
 			continue;
 		}
+		
+		clear();
 
 		// check the verb for the move command
 		if (verb == "move") {
@@ -56,6 +80,7 @@ void Game::Run()
 			}
 			// pass the noun off to the movement handler
 			HandleMovement(results[1]);
+			continue;
 		}
 
 		if (verb == "look")
@@ -67,7 +92,7 @@ void Game::Run()
 			else {
 				DoRoomLook();
 			}
-			
+			continue;
 		}
 
 		if (verb == "help") {
@@ -95,7 +120,20 @@ void Game::Init()
 	// build the player object, only Game cares about it, so it can be unique.
 	Player = std::make_unique<Adventurer>();
 
+	LoadItemData();
 	LoadRoomData();
+}
+
+void Game::LoadItemData()
+{
+	std::ifstream itemFile("items.json");
+	json itemList;
+	itemFile >> itemList;
+
+	for (auto it = itemList.begin(); it != itemList.end(); ++it) {
+		json item = *it;
+		auto newItem = new Item(item["name"], item["description"]);
+	}
 }
 
 void Game::LoadRoomData()
@@ -104,7 +142,6 @@ void Game::LoadRoomData()
 	json roomData;
 	roomFile >> roomData;
 
-	std::vector<std::shared_ptr<Room>> rooms;
 	std::vector<TempExit> exits;
 
 	for (auto it = roomData.begin(); it != roomData.end(); ++it) {
@@ -193,7 +230,7 @@ bool Game::ChangeRoom(std::shared_ptr<Room> newRoom)
 
 	// move room if we have a new room to move to
 	CurrentRoom = newRoom;
-	std::cout << CurrentRoom->GetName() << "\n";
+	DoRoomLook();
 
 	return true;
 }
@@ -208,6 +245,10 @@ void Game::HandleMovement(std::string direction)
 		dir = ExitDirections::East;
 	else if (direction[0] == 'w')
 		dir = ExitDirections::West;
+	else if (direction[0] == 'd')
+		dir = ExitDirections::Down;
+	else if (direction[0] == 'u')
+		dir = ExitDirections::Up;
 
 	// see if the current room has that direction as a valid exit
 	if (!ChangeRoom(CurrentRoom->CheckExit(dir)))

@@ -36,10 +36,12 @@ public:
 	/// AddExit - adds an exit to the exit vector
 	void AddExit(std::shared_ptr<Exit> newExit);
 
+	void AddItem(std::unique_ptr<Item> newItem);
+
 private:
 	int id;
 	std::string name;
 	std::string description;
 	std::vector<std::shared_ptr<Exit>> exits;
-	std::vector<std::shared_ptr<Item>> inventory;
+	std::vector<std::unique_ptr<Item>> inventory;
 };
