@@ -38,6 +38,12 @@ public:
 
 	void AddItem(std::unique_ptr<Item> newItem);
 
+	std::unique_ptr<Item> DropItem(std::string item);
+
+	bool HasItems() { return inventory.size() > 0; }
+	const std::vector<std::unique_ptr<Item>> &GetInventory() const { return inventory; }
+	const int GetId() const { return id; }
+
 private:
 	int id;
 	std::string name;

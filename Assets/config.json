@@ -11,6 +11,10 @@
     "description": "prints the available commands",
     "synonyms": [ "help", "stuck", "hint" ]
   },
+  "take": {
+    "description": "take <item> - pick up the specified item from the current room.",
+    "synonyms": ["take", "grab", "pickup"]
+  },
   "quit": {
     "description": "exit the game",
     "synonyms": ["quit", "exit"]

@@ -5,6 +5,12 @@
 #include "Room.h"
 #include "UtilEnums.h"	
 
+struct TempExit {
+	std::string dir;
+	int toId;
+	int fromId;
+};
+
 /// Exit Class - contains a direction and a room to travel to.
 class Exit
 {

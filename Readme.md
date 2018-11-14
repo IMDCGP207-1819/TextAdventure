@@ -7,15 +7,15 @@ Basic text adventure game that will load environments and other config elements 
 - [ ] Input parser
   - [x] Split input strings
   - [ ] Command processors
-    - [ ] Move
-    - [ ] Look
+    - [x] Move
+    - [x] Look
     - [ ] Use
-    - [ ] Take
-- [ ] Data input
-  - [ ] JSON library
-  - [ ] world building from data
-  - [ ] command configuration
+    - [x] Take
+- [x] Data input
+  - [x] JSON library
+  - [x] world building from data
+  - [x] command configuration
 - [ ] World representation
   - [ ] Items
-  - [ ] Rooms
+  - [x] Rooms
   - [ ] Adventurer

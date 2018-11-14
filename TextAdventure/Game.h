@@ -1,12 +1,9 @@
 #pragma once
 #include <memory>
-
-#include <nlohmann\json.hpp>
+#include <map>
 
 #include "Room.h"
 #include "Adventurer.h"
-
-using json = nlohmann::json;
 
 struct CommandInfo {
 	std::string description;
@@ -36,6 +33,9 @@ private:
 	void HandleMovement(std::string direction);
 
 	void DoRoomLook();
+	void DoItemLook(std::string item_name);
+	bool SearchInventory(std::string item_name, const std::vector<std::unique_ptr<Item>> &inventory);
+	void HandleItemTake(std::string item_name);
 	void PrintHelp();
 
 	std::string StandardiseCommandInput(std::string command);

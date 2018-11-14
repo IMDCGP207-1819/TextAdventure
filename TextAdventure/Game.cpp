@@ -1,5 +1,3 @@
-#include "Game.h"
-
 #define _WIN32_WINNT 0x0500
 
 #include <windows.h> 
@@ -11,14 +9,13 @@
 #include <sstream>
 #include <iterator>
 
+#include <nlohmann\json.hpp>
+
+#include "Game.h"
 #include "Room.h"
 #include "Exit.h"
 
-struct TempExit {
-	std::string dir;
-	int toId;
-	int fromId;
-};
+using json = nlohmann::json;
 
 void clear() {
 	COORD topLeft = { 0, 0 };
@@ -70,12 +67,12 @@ void Game::Run()
 		clear();
 
 		// check the verb for the move command
-		if (verb == "move") {
-
+		if (verb == "move") 
+		{
 			// check if we have a single noun provided
 			if (results.size() != 2)
 			{
-				std::cout << "invalid command structure" << "\n";
+				std::cout << "invalid command structure\n";
 				continue;
 			}
 			// pass the noun off to the movement handler
@@ -83,11 +80,23 @@ void Game::Run()
 			continue;
 		}
 
+		if (verb == "take") 
+		{
+			if (results.size() != 2) {
+				std::cout << "invalid command structure\n";
+				continue;
+			}
+
+			HandleItemTake(results[1]);
+			continue;
+		}
+
 		if (verb == "look")
 		{
-			// TODO: break look up into looking at the room 'look' and looking at thing 'look <item>'
 			if (results.size() == 2) {
-
+				std::string item = results[1];
+				std::transform(item.begin(), item.end(), item.begin(), ::tolower);
+				DoItemLook(item);
 			}
 			else {
 				DoRoomLook();
@@ -102,6 +111,19 @@ void Game::Run()
 		if (verb == "quit")
 			break;
 	}
+}
+
+void Game::HandleItemTake(std::string item_name) 
+{
+	auto item = std::move(CurrentRoom->DropItem(item_name));
+
+	if (item != nullptr) {
+		Player->AddItem(std::move(item));
+		std::cout << "You have picked up: " << item_name << "\n";
+		return;
+	}
+	
+	std::cout << "You cannot pickup that item here\n";
 }
 
 void Game::PrintHelp() {
@@ -120,19 +142,34 @@ void Game::Init()
 	// build the player object, only Game cares about it, so it can be unique.
 	Player = std::make_unique<Adventurer>();
 
-	LoadItemData();
 	LoadRoomData();
+	LoadItemData();
 }
 
 void Game::LoadItemData()
 {
 	std::ifstream itemFile("items.json");
 	json itemList;
-	itemFile >> itemList;
+	itemFile >> itemList;	
+
+	std::vector<std::unique_ptr<Item>> items;
 
 	for (auto it = itemList.begin(); it != itemList.end(); ++it) {
 		json item = *it;
-		auto newItem = new Item(item["name"], item["description"]);
+		items.push_back(std::make_unique<Item>(item["name"], item["description"], item["room_id"]));
+	}
+
+	for (auto &item : items) {
+		if (item->GetTargetRoom() == 0) continue;
+
+		int id = item->GetTargetRoom();
+
+		auto room_find = std::find_if(rooms.begin(), rooms.end(), [id](const std::shared_ptr<Room> room) { return room->GetId() == id; });
+
+		if (room_find != rooms.end()) {
+			auto room = *room_find;
+			room->AddItem(std::move(item));
+		}
 	}
 }
 
@@ -261,6 +298,43 @@ void Game::DoRoomLook()
 {
 	std::cout << CurrentRoom->GetName() << "\n";
 	std::cout << CurrentRoom->GetDescription() << "\n";
+
+	if (CurrentRoom->HasItems()) {
+		std::cout << "The room contains the following items:\n";
+		for (auto &item : CurrentRoom->GetInventory()) {
+			std::cout << item->GetName() << "\n";
+		}
+	}
+}
+
+bool Game::SearchInventory(std::string item_name, const std::vector<std::unique_ptr<Item>> &inventory) 
+{
+	// check if the item exists in the provided inventory.
+	auto item_find = std::find_if(inventory.begin(), inventory.end(), [item_name](const std::unique_ptr<Item> &item) {
+		std::string itemName = item->GetName();
+		std::transform(itemName.begin(), itemName.end(), itemName.begin(), ::tolower);
+		return itemName == item_name;
+	});
+
+	// the item exists in the players inventory, so we can print the description and bail.
+	if (item_find != inventory.end()) {
+		auto item_ptr = &*item_find;
+		std::cout << item_ptr->get()->GetDescription() << "\n";
+		return true;
+	}
+
+	return false;
+}
+
+void Game::DoItemLook(std::string item_name)
+{
+	auto &player_items = Player->GetInventory();
+	bool found = SearchInventory(item_name, player_items);	
+
+	if (found) return;
+	
+	auto &room_items = CurrentRoom->GetInventory();
+	SearchInventory(item_name, room_items);
 }
 
 std::string Game::StandardiseCommandInput(std::string command)
