@@ -91,6 +91,16 @@ void Game::Run()
 			continue;
 		}
 
+		if (verb == "drop") 
+		{
+			if (results.size() != 2) {
+				std::cout << "invalid command structure\n";
+				continue;
+			}
+
+			HandleDropItem(results[1]);
+		}
+
 		if (verb == "look")
 		{
 			if (results.size() == 2) {
@@ -118,12 +128,26 @@ void Game::HandleItemTake(std::string item_name)
 	auto item = std::move(CurrentRoom->DropItem(item_name));
 
 	if (item != nullptr) {
-		Player->AddItem(std::move(item));
-		std::cout << "You have picked up: " << item_name << "\n";
+		std::cout << "You have picked up: " << item->GetName() << "\n";
+		Player->AddItem(std::move(item));		
 		return;
 	}
 	
 	std::cout << "You cannot pickup that item here\n";
+}
+
+void Game::HandleDropItem(std::string item_name)
+{
+	auto item = Player->DropItem(item_name);
+
+	if (item != nullptr)
+	{
+		std::cout << "You have dropped the " << item->GetName() << "\n";
+		CurrentRoom->AddItem(std::move(item));
+		return;
+	}
+
+	std::cout << "You are not carrying that item\n";
 }
 
 void Game::PrintHelp() {

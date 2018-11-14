@@ -16,19 +16,26 @@ void Adventurer::AddItem(std::unique_ptr<Item> item)
 }
 
 /// DropItem takes a string and returns either nullptr or the item from the adventurers inventory, in which case, it removes the item from the vector
-/*std::unique_ptr<Item> Adventurer::DropItem(std::string itemName)
+std::unique_ptr<Item> Adventurer::DropItem(std::string itemName)
 {
+	std::transform(itemName.begin(), itemName.end(), itemName.begin(), ::tolower);
+
 	// use the same style of find_if call to get the item from the inventory, if it exists.
-	auto item = std::find_if(inventory.begin(), inventory.end(), [&itemName](std::unique_ptr<Item> &item) {return item->GetName() == itemName; });
+	auto item = std::find_if(inventory.begin(), inventory.end(), [itemName](std::unique_ptr<Item> &item) {
+		std::string current_item = item->GetName();
+		std::transform(current_item.begin(), current_item.end(), current_item.begin(), ::tolower);
+		return current_item == itemName;
+	});
 
 	// if we got to the end of the vector, item will equal inventory.end() and we can return a nullptr - that item does not exist in our pockets
 	if (item == inventory.end()) return nullptr;
 
-	auto droppedItem = &*item;
+	// std::move will change the ownership of the unique_ptr, so the entry in the inventory becomes null
+	auto droppedItem = std::move(*item);
 
 	// and remove it from the inventory vector
 	inventory.erase(item);
 
 	// and return it.
 	return std::move(droppedItem);
-}*/
+}

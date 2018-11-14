@@ -13,7 +13,7 @@ public:
 	const std::vector<std::unique_ptr<Item>>& GetInventory() const { return inventory; }
 	bool HasItem(std::string itemName);
 	void AddItem(std::unique_ptr<Item> item);
-	//std::unique_ptr<Item> DropItem(std::string itemName);
+	std::unique_ptr<Item> DropItem(std::string itemName);
 
 private:
 	std::vector<std::unique_ptr<Item>> inventory;

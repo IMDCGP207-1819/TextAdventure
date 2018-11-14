@@ -42,5 +42,9 @@ std::unique_ptr<Item> Room::DropItem(std::string item)
 	if ( room_find == inventory.end())
 		return nullptr;
 
-	return std::move(*room_find);
+	auto drop_item = std::move(*room_find);
+
+	inventory.erase(room_find);
+
+	return std::move(drop_item);
 }

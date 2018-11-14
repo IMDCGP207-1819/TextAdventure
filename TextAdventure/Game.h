@@ -36,6 +36,7 @@ private:
 	void DoItemLook(std::string item_name);
 	bool SearchInventory(std::string item_name, const std::vector<std::unique_ptr<Item>> &inventory);
 	void HandleItemTake(std::string item_name);
+	void HandleDropItem(std::string item_name);
 	void PrintHelp();
 
 	std::string StandardiseCommandInput(std::string command);
