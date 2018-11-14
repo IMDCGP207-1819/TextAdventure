@@ -33,6 +33,8 @@ public:
 	/// CheckExit - searches the exit vector for an exit associated with the given direction
 	std::shared_ptr<Room> CheckExit(ExitDirections dir);
 
+	const std::vector<std::shared_ptr<Exit>> &GetExitList() const;
+
 	/// AddExit - adds an exit to the exit vector
 	void AddExit(std::shared_ptr<Exit> newExit);
 

@@ -24,6 +24,8 @@ public:
 	/// GetRoom - returns the shared_ptr to the exits room
 	std::shared_ptr<Room> GetRoom() { return roomToExitTo; }
 
+	const std::string GetExitString() const;
+
 private:
 	ExitDirections direction;
 	std::shared_ptr<Room> roomToExitTo;

@@ -39,9 +39,13 @@ void Game::Run()
 	// run all setup
 	Init();
 
+	// print the starting room name + description.
+	DoRoomLook();
+
 	// loop until we get a suitable exit command from the user
 	while (true)
 	{
+		std::cout << "\n>";
 		std::string input; 
 		std::getline(std::cin, input);
 		std::string verb = "invalid";
@@ -80,8 +84,10 @@ void Game::Run()
 			continue;
 		}
 
+		// handle the take verb
 		if (verb == "take") 
 		{
+			// take has to specify an item to take
 			if (results.size() != 2) {
 				std::cout << "invalid command structure\n";
 				continue;
@@ -91,24 +97,35 @@ void Game::Run()
 			continue;
 		}
 
+		// handle dropping items from the player inventory
 		if (verb == "drop") 
 		{
+			// as with take, drop requires the player specify an item.
 			if (results.size() != 2) {
 				std::cout << "invalid command structure\n";
 				continue;
 			}
 
 			HandleDropItem(results[1]);
+			continue;
 		}
 
+		// look handling
 		if (verb == "look")
 		{
-			if (results.size() == 2) {
+			// if we have more than 2 words entered, something is wrong.
+			if (results.size() > 2) {
+				std::cout << "invalid command structure\n";
+				continue;
+			}
+			// if there are two strings entered, we're probably trying to look at an item
+			else if (results.size() == 2) {
 				std::string item = results[1];
 				std::transform(item.begin(), item.end(), item.begin(), ::tolower);
 				DoItemLook(item);
 			}
 			else {
+				// otherwise, we'll just assume they want to look at the current room.
 				DoRoomLook();
 			}
 			continue;
@@ -125,34 +142,46 @@ void Game::Run()
 
 void Game::HandleItemTake(std::string item_name) 
 {
+	// we call DropItem on CurrentRoom, which either gives us back the item we asked for or nullptr if it is not present.
 	auto item = std::move(CurrentRoom->DropItem(item_name));
 
+	// if we don't get back a nullptr
 	if (item != nullptr) {
+		// inform the player they have successfully picked up the item
 		std::cout << "You have picked up: " << item->GetName() << "\n";
+		// and add it to the player inventory.
 		Player->AddItem(std::move(item));		
 		return;
 	}
 	
+	// otherwise, we tell them they couldn't pick it up
+	// this could be for a couple of reasons: 
+	// - the item does not exist in the current room
+	// - the player mispelt the item name.
 	std::cout << "You cannot pickup that item here\n";
 }
 
 void Game::HandleDropItem(std::string item_name)
 {
+	// the call to DropItem on Adventurer (via the Player unique_ptr) either gives us back a reference to the item, or nullptr.
 	auto item = Player->DropItem(item_name);
 
+	// if it's not null
 	if (item != nullptr)
 	{
+		// tell them they have dropped the item
 		std::cout << "You have dropped the " << item->GetName() << "\n";
+		// and add the item to the current room inventory
 		CurrentRoom->AddItem(std::move(item));
 		return;
 	}
 
+	// otherwise, they aren't carrying the specified item, the same two reasons as specified in HandleTakeItem apply here too
 	std::cout << "You are not carrying that item\n";
 }
 
 void Game::PrintHelp() {
-	// we loop over the command map entries
-	// and then over each of the vector of synonyms to see if we have a match
+	// loop the commands in the command map, for each, print the "key" command and the description.
 	std::cout << "\nThe following commands are available:\n";
 	for (auto it = commandMap.begin(); it != commandMap.end(); ++it) {
 		std::cout << it->first << ": " << it->second->description << "\n";
@@ -324,10 +353,16 @@ void Game::DoRoomLook()
 	std::cout << CurrentRoom->GetDescription() << "\n";
 
 	if (CurrentRoom->HasItems()) {
-		std::cout << "The room contains the following items:\n";
+		std::cout << "\nThe room contains the following items:\n";
 		for (auto &item : CurrentRoom->GetInventory()) {
-			std::cout << item->GetName() << "\n";
+			std::cout << " - " << item->GetName() << "\n";
 		}
+	}
+
+	std::cout << "\nThere are exits in these directions:\n";
+
+	for (auto &item : CurrentRoom->GetExitList()) {
+		std::cout << " - " << item->GetExitString() << "\n";
 	}
 }
 

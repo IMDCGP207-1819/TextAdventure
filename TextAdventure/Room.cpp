@@ -19,6 +19,11 @@ std::shared_ptr<Room> Room::CheckExit(ExitDirections dir)
 	return nullptr;
 }
 
+const std::vector<std::shared_ptr<Exit>> &Room::GetExitList() const
+{
+	return exits;
+}
+
 void Room::AddExit(std::shared_ptr<Exit> newExit)
 {
 	exits.push_back(newExit);

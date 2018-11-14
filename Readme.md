@@ -11,6 +11,7 @@ Basic text adventure game that will load environments and other config elements 
     - [x] Look
     - [ ] Use
     - [x] Take
+	- [x] Drop
 - [x] Data input
   - [x] JSON library
   - [x] world building from data
@@ -18,4 +19,4 @@ Basic text adventure game that will load environments and other config elements 
 - [ ] World representation
   - [ ] Items
   - [x] Rooms
-  - [ ] Adventurer
+  - [x] Adventurer
