@@ -1,6 +1,9 @@
+#ifdef _WIN32
 #define _WIN32_WINNT 0x0500
 
 #include <windows.h> 
+#endif
+
 #include <iostream>
 
 #include <string>
@@ -18,6 +21,7 @@
 using json = nlohmann::json;
 
 void clear() {
+#ifdef _WIN32_WINNT 
 	COORD topLeft = { 0, 0 };
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_SCREEN_BUFFER_INFO screen;
@@ -32,6 +36,10 @@ void clear() {
 		screen.dwSize.X * screen.dwSize.Y, topLeft, &written
 	);
 	SetConsoleCursorPosition(console, topLeft);
+#else
+	// CSI[2J clears screen, CSI[H moves the cursor to top-left corner
+	std::cout << "\x1B[2J\x1B[H";
+#endif
 }
 
 void Game::Run()
@@ -59,7 +67,6 @@ void Game::Run()
 			results = std::vector<std::string>((std::istream_iterator<std::string>(iss)),
 				std::istream_iterator<std::string>());
 
-			// TODO: refine input handling
 			verb = StandardiseCommandInput(results[0]);
 		}
 
