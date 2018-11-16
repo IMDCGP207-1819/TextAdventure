@@ -2,54 +2,46 @@
 
 #include <algorithm>
 
-std::string Room::GetName()
-{
-	return name;
+std::string Room::GetName() { return name; }
+
+std::shared_ptr<Room> Room::CheckExit(ExitDirections dir) {
+  // use a range-based for loop to work through all values in the exits vector
+  for (auto exit : exits) {
+    if (exit->HasDirection(dir))
+      return exit->GetRoom();
+  }
+
+  return nullptr;
 }
 
-std::shared_ptr<Room> Room::CheckExit(ExitDirections dir)
-{
-	// use a range-based for loop to work through all values in the exits vector
-	for (auto exit : exits)
-	{
-		if (exit->HasDirection(dir))
-			return exit->GetRoom();
-	}
-
-	return nullptr;
+const std::vector<std::shared_ptr<Exit>> &Room::GetExitList() const {
+  return exits;
 }
 
-const std::vector<std::shared_ptr<Exit>> &Room::GetExitList() const
-{
-	return exits;
+void Room::AddExit(std::shared_ptr<Exit> newExit) { exits.push_back(newExit); }
+
+void Room::AddItem(std::unique_ptr<Item> newItem) {
+  inventory.push_back(std::move(newItem));
 }
 
-void Room::AddExit(std::shared_ptr<Exit> newExit)
-{
-	exits.push_back(newExit);
-}
+std::unique_ptr<Item> Room::DropItem(std::string item) {
+  std::transform(item.begin(), item.end(), item.begin(), ::tolower);
 
-void Room::AddItem(std::unique_ptr<Item> newItem)
-{
-	inventory.push_back(std::move(newItem));
-}
+  auto room_find =
+      std::find_if(inventory.begin(), inventory.end(),
+                   [item](const std::unique_ptr<Item> &inv_item) {
+                     std::string itemName = inv_item->GetName();
+                     std::transform(itemName.begin(), itemName.end(),
+                                    itemName.begin(), ::tolower);
+                     return itemName == item;
+                   });
 
-std::unique_ptr<Item> Room::DropItem(std::string item)
-{
-	std::transform(item.begin(), item.end(), item.begin(), ::tolower);
+  if (room_find == inventory.end())
+    return nullptr;
 
-	auto room_find = std::find_if(inventory.begin(), inventory.end(), [item](const std::unique_ptr<Item> &inv_item) { 
-		std::string itemName = inv_item->GetName();
-		std::transform(itemName.begin(), itemName.end(), itemName.begin(), ::tolower);
-		return itemName == item;
-	});
+  auto drop_item = std::move(*room_find);
 
-	if ( room_find == inventory.end())
-		return nullptr;
+  inventory.erase(room_find);
 
-	auto drop_item = std::move(*room_find);
-
-	inventory.erase(room_find);
-
-	return std::move(drop_item);
+  return std::move(drop_item);
 }
